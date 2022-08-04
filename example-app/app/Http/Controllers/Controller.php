@@ -19,11 +19,17 @@ class Controller extends BaseController
        // ENTRY POINT INTO THE APPLICATION, HERE WE DECIDE WHAT WE'RE GOING TO DO.
 
        //Retrieve all 'shapes' from the database, and store them in a collection.
-//       $shapes = Shape::all();
-
+       //( here' we're randomising the data to satisfy the requriement that the groups should change on refresh )
        $shapes = Shape::orderBy(DB::raw('RAND()'))->get();;
 
+       // next we take that data we've gathered from the database, and we hand it off to a 'SortingService' this is designed this way try
+       // to minimise the amount of business logic added to controllers and increases re-usability
        $sortOutput = (new SortingService($shapes))->execute();
+
+
+
+       // This should really be here, instead we should take '$sortOutput' and hand it off to a 'view' that would be responsible for rendering the data however we want.
+       // but instead we're just printing to the screen.
 
        $sortOutput->each(function ($group, $key){
 
@@ -36,20 +42,6 @@ class Controller extends BaseController
            });
 
         });
-
-       /*
-        * RULES -
-        *
-        * ONLY ONE COLOUR ALLOWED PER EACH GROUP
-        *
-        * ONLY ONE SHAPE TYPE ALLOWED PER GROUP ( NOTE SQUARES ARE ALLOWED 2 )
-        *
-        * NO LIMIT ON NUMBER OF GROUPS
-        *
-        */
-
-
-
 
    }
 

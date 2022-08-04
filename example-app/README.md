@@ -1,61 +1,67 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+## Brief Description
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+This is a Laravel application developed under a specific ruleset provided by Applied Digital as a Technical Test
 
-## About Laravel
+## Rules / Spec
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Only 1 of each colour allowed per group 
+  - eg Each group must contain 1 red, 1 blue, 1 green and 1 yellow shape
+- Max of 1 of each shape allowed per group, except squares which are allowed a max of 2 per group.
+  - eg A group containing 2 squares, 1 triangle and 1 circle would be allowed
+  - eg A group containing 1 square, 2 triangles and 1 circle would not be allowed
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technical Explanation / Reasoning 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+This piece was outline as a simple task to be designed and solved in assumed procedural php, but I felt it was useful to outline how the soltion 
+may be solved in a framework such as Laravel utilising ORM Databases and Object Orientated Programming. 
 
-## Learning Laravel
+## Setup for evaluation 
+#### Requirements 
+- php 7.2
+- mysql
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Ensure you have a local mysql installation running and create a new database for this application
+the connection details need to be updated in `.env`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+second to this, you will need to run the migrations and seeds using these commands
 
-## Laravel Sponsors
+`$ php artisan migrate`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+`$ php artisan db:seed`
 
-### Premium Partners
+This should have successfully created all the prerequisite data to run the application. 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+next execute the local php server using this command
 
-## Contributing
+`$ php artisan serve`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+the terminal window should provide you a link to access the application
 
-## Code of Conduct
+### Important files / locations 
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Routing 
 
-## Security Vulnerabilities
+In laravel web routing is handled in `routes/web.php` here is the initial entry point into the application
+in this case, there is only one entry pointing you to a controller `app/Http/Controllers/Controller.php`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+#### Controllers
+As mentioned previously the one and only 'Controller' used in this application is `app/Http/Controllers/Controller.php`
+under normal circumstances its one and only responsibility would be to gather the information requested, and hand it off to a 'view'
+but in this instance it's also formatting the data for view, this is only done here in the interest of saving alittle time. 
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Services
+The controller hand's off the information gathered from the database to a service `app/Http/Services/SortingService.php`. A service's responsibility in this instance is to house 
+the business logic, the idea here is if we decided in future that we actually wanted to sort the data in a different way, we could create a
+second service to handle that. or perhaps we wanted to reuse the sorting function itself elsewhere in the application then we can do that easily. 
+
+##### Note, in this service I've dynamically defined the rules, so they can be changed easily and the application will accommodate. 
+
+#### Database Seeder
+A Database seeder is responsible for creating the pre-requisite data for the application, `database/seeds/ShapeSeeder.php` I decided to go down 
+this route, and programmatically define the structure so once again I can modify the shapes/colour combinations that are added to the system easily. 
+
+#### Models
+In this application, there is only one model defined `app/Shape.php`. This is an incredibly simple model as we haven't defined any 'Accessors' or 'Mutators'
+but here would be where you would define 'data specific logic'. 
+

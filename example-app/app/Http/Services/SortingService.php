@@ -18,6 +18,8 @@ class SortingService
     public $outputCollection;
 
 
+    // we have a simple constructor here designed to 'set up' the service when it's first instantiated.
+    // in this case, it's taking the input and storing it as a property, but it's also running a method that is designed to create the ruleset provided.
     public function __construct($input)
     {
         $this->input = $input;
@@ -25,6 +27,8 @@ class SortingService
         $this->defineRules();
     }
 
+    // this is the 'main' function that this service runs its responsible for taking the data we've provided from the controller,
+    // and returning the groups that we need based on the rules set at the bottom of this file.
     public function execute(): Collection
     {
         // loop through the input collection, and start to add them to their new homes in the output collection
@@ -36,15 +40,17 @@ class SortingService
             // this is necessary for the first run, if we're on the first shape the code will break, so we need to skip the 'check' and just add it to the first group.
             if ($this->outputCollection->isNotEmpty()){
 
-
+                // now we're looping through the 'output collection' as we need to know what's already in each group before we add more!
                 $this->outputCollection->each(function ($group, $key) use ($shape, &$shapeSorted) {
 
-                    // run a function created to determine if the shape will fit in the current group.
+                    // run a function created to determine if the shape will fit in the current group. ( will skip if shape has already found a home )
                     if($this->checkShapesValidityInGroup($shape, $group, $key))
                     {
+                        // check passed, and it'll fit here fine, so we add it to the group, then update the $shapeSorted Variable to ensure we skip through.
                         /* @var $group Collection */
                         $group->push($shape);
                         $shapeSorted = true;
+                        return false;
                     }
 
                     // if that won't fit anymore, then check the next group
@@ -78,6 +84,7 @@ class SortingService
 
         $valid = true;
 
+        // firstly we need to loop through the 'existing' group that were checking to calculate what's already in there.
         // note because we're using anonymous functions here, we need to prepend the 'used' variables outside the scope with & to tell php that we want them to be updated.
         $group->each(function ($groupShape) use (&$valid, &$currentGroupCounterColour, &$currentGroupCounterType, $shape, $key, $group) {
 
